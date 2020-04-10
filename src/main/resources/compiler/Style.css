@@ -1,0 +1,27 @@
+#toolBar {
+    -fx-orientation: "horizontal";
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.button {
+    -fx-content-display: "top";
+}
+
+#lineNumber {
+    -fx-alignment: "top_right";
+    -fx-control-inner-background: gray;
+    -fx-text-alignment: right;
+    -fx-padding: 5.0, 5.0, 0.0, 5.0;
+}
+
+#messageArea .scroll-pane {
+    -fx-hbar-policy: "always";
+    -fx-vbar-policy: "always";
+}
+
+#statusArea .scroll {
+    -fx-hbar-policy: "never";
+    -fx-vbar-policy: "never";
+}
+

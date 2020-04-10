@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ToolBar?>
+
+<?import java.net.URL?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import org.fxmisc.richtext.CodeArea?>
+<?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<VBox fx:id="vBox" fx:controller="compiler.Controller"
+      xmlns:fx="http://javafx.com/fxml" alignment="TOP_CENTER">
+   <ToolBar fx:id="toolBar" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width}">
+      <Button fx:id="newBtn" text="novo [ctrl-n]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#newBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/new.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="openBtn" text="abrir [ctrl-o]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#openBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/open.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="saveBtn" text="salvar [ctrl-s]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#saveBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/save.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="copyBtn" text="copiar [ctrl-c]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#copyBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/copy.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="pasteBtn" text="colar [ctrl-v]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#pasteBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/paste.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="cutBtn" text="recortar [ctrl-x]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#cutBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/cut.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="compileBtn" text="compilar [F9]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#compileBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/compile.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="teamBtn" text="equipe [F1]" prefHeight="${vBox.width*(70.0/900.0)}" prefWidth="${vBox.width/8-0.9}" onAction="#teamBtnPress">
+         <graphic>
+            <ImageView preserveRatio="true" fitHeight="${toolBar.height - 35}">
+               <Image url="/icons/team.png" />
+            </ImageView>
+         </graphic>
+      </Button>
+   </ToolBar>
+   <HBox fx:id="hBox" alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
+      <VirtualizedScrollPane fx:id="editorScrollPane" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+         <content>
+            <CodeArea fx:id="editorArea"/>
+         </content>
+      </VirtualizedScrollPane>
+   </HBox>
+   <TextArea fx:id="messageArea" prefHeight="100" editable="false"/>
+   <TextArea fx:id="statusArea" prefHeight="30" editable="false"/>
+   <stylesheets>
+      <URL value="@Style.css" />
+   </stylesheets>
+</VBox>
