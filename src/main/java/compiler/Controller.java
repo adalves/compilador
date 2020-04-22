@@ -31,6 +31,7 @@ public class Controller implements Initializable {
 
     private Stage primaryStage;
     private File currFile = null;
+    private Compiler compiler = new Compiler();
 
     private final FileChooser fileChooser = new FileChooser();
 
@@ -121,7 +122,8 @@ public class Controller implements Initializable {
     }
 
     public void compileBtnPress() {
-        messageArea.setText("Compilação de programas ainda não foi implementada.");
+        String str = compiler.compile(editorArea.getText());
+        messageArea.setText(str);
     }
 
     public void teamBtnPress() {
