@@ -42,7 +42,7 @@ public class Controller implements Initializable {
         editorScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         editorScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         messageArea.setFocusTraversable(false);
-        messageArea.setMouseTransparent(true);
+        //messageArea.setMouseTransparent(true);
         statusArea.setFocusTraversable(false);
         statusArea.setMouseTransparent(true);
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Arquivos .txt","*.txt"));

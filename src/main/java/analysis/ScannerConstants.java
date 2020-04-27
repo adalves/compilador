@@ -940,14 +940,11 @@ public interface ScannerConstants
 
     String[] SCANNER_ERROR =
     {
-        "Caractere não esperado",
+        "símbolo inválido",
         "",
         "",
-        "Erro identificando cte_str",
-        "Erro identificando cte_bin ou cte_hex",
-        "",
-        "",
-        "",
+        "constante string inválida ou não finalizada",
+        "constante binária ou hexadecimal inválida",
         "",
         "",
         "",
@@ -962,23 +959,26 @@ public interface ScannerConstants
         "",
         "",
         "",
-        "Erro identificando <ignorar>",
         "",
         "",
         "",
-        "Erro identificando cte_bin",
-        "Erro identificando cte_hex",
+        "comentário de bloco inválido ou não finalizado",
         "",
         "",
         "",
-        "Erro identificando cte_real",
+        "constante binária inválida",
+        "constante hexadecimal inválida",
+        "",
+        "",
+        "",
+        "constante real inválida",
         "",
         "",
         "",
         "",
         "",
         "",
-        "Erro identificando cte_real"
+        "constante real inválida"
     };
 
 }

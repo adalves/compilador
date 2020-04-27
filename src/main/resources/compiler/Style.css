@@ -15,9 +15,17 @@
     -fx-padding: 5.0, 5.0, 0.0, 5.0;
 }
 
+#messageArea {
+    -fx-font-family: "monospace";
+}
+
 #messageArea .scroll-pane {
     -fx-hbar-policy: "always";
     -fx-vbar-policy: "always";
+}
+
+#statusArea {
+    -fx-font-family: "monospace";
 }
 
 #statusArea .scroll {
