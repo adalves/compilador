@@ -1,16 +1,16 @@
 package analysis;
 
-public class Lexico implements Constants
+public class Lexical implements Constants
 {
     private int position;
     private String input;
 
-    public Lexico()
+    public Lexical()
     {
         this("");
     }
 
-    public Lexico(String input)
+    public Lexical(String input)
     {
         setInput(input);
     }
@@ -55,16 +55,16 @@ public class Lexico implements Constants
                 }
             }
         }
-        if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
+        if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
             throw new LexicalError(input.substring(start, position), SCANNER_ERROR[lastState], start);
-        }
 
         position = end;
 
         int token = tokenForState(endState);
 
-        if (token == 0)
+        if (token == 0) {
             return nextToken();
+        }
         else
         {
             String lexeme = input.substring(start, end);

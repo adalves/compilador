@@ -1,37 +1,40 @@
 package compiler;
 
-import analysis.LexicalError;
-import analysis.Lexico;
-import analysis.Token;
+import analysis.*;
 
 public class Compiler {
-    Lexico lexical = new Lexico();
+    Lexical lexical = new Lexical();
+    Syntactic syntactic = new Syntactic();
+    Semantic semantic = new Semantic();
 
     public String compile(String text) {
-        lexical.setInput(text);
-        boolean containsLexeme = false;
-        String result = String.format("%-10s %-25s %s %n", "linha", "classe", "lexema");
-        try {
-            Token t;
-            while ((t = lexical.nextToken()) != null) {
-                result += String.format("%-10s %-25s %s %n", getLine(text, t.getPosition()), t.getTokenClass(), t.getLexeme());
-                containsLexeme = true;
-            }
-            result += "Programa compilado com sucesso";
+        if (text.isEmpty()) {
+            return "nenhum programa para compilar";
         }
-        catch (LexicalError e) {
+        lexical.setInput(text);
+        String result ="Programa compilado com sucesso";
+        try {
+            syntactic.parse(lexical, semantic);
+        } catch (LexicalError e) {
             result = "Erro na linha " + getLine(text, e.getPosition()) + " - ";
             if (e.getMessage().contains("símbolo inválido")) result += e.getSymbol() + " ";
             result += e.getMessage();
-            containsLexeme = true;
+        } catch (SyntacticError e) {
+            String symbol = e.getSymbol();
+            if (symbol.equals("$")) symbol = "EOF";
+            result = "Erro na linha " + getLine(text, e.getPosition()) + " - " +
+                    "encontrado " + symbol + " esperado " + e.getMessage();
+        } catch (SemanticError e) {
+
         }
-        if (!containsLexeme) result = "nenhum programa para compilar";
+
         return result;
     }
 
     private int getLine(String text, int pos) {
         int line = 1;
-        for (int i = 0; i <= pos; ++i) {
+        int realPos = text.length() == pos ? pos - 1 : pos;
+        for (int i = 0; i <= realPos; ++i) {
             if(text.charAt(i) == '\n'){
                 ++line;
             }
