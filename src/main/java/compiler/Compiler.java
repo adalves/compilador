@@ -11,6 +11,7 @@ public class Compiler {
         if (text.isEmpty()) {
             return "nenhum programa para compilar";
         }
+        semantic.clear();
         lexical.setInput(text);
         String result ="Programa compilado com sucesso";
         try {
@@ -25,7 +26,8 @@ public class Compiler {
             result = "Erro na linha " + getLine(text, e.getPosition()) + " - " +
                     "encontrado " + symbol + " esperado " + e.getMessage();
         } catch (SemanticError e) {
-
+            String symbol = e.getSymbol();
+            result = "Erro na linha " + getLine(text, e.getPosition()) + " - " + e.getMessage();
         }
 
         return result;
@@ -40,5 +42,9 @@ public class Compiler {
             }
         }
         return line;
+    }
+
+    public String getCompiledCode() {
+        return semantic.getCode();
     }
 }

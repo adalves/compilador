@@ -31,6 +31,7 @@ public class Controller implements Initializable {
 
     private Stage primaryStage;
     private File currFile = null;
+    private File compiledFile = null;
     private Compiler compiler = new Compiler();
 
     private final FileChooser fileChooser = new FileChooser();
@@ -124,6 +125,12 @@ public class Controller implements Initializable {
     public void compileBtnPress() {
         String str = compiler.compile(editorArea.getText());
         messageArea.setText(str);
+
+        if (str.equals("Programa compilado com sucesso")) {
+            compiledFile = fileChooser.showSaveDialog(primaryStage);
+            if (compiledFile != null)
+                FileUtils.writeToFile(compiledFile, compiler.getCompiledCode());
+        }
     }
 
     public void teamBtnPress() {
