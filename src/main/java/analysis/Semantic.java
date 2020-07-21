@@ -15,6 +15,7 @@ public class Semantic implements Constants
     Token varValue;
     ArrayList<String> idList = new ArrayList<>();
     ArrayList<Integer> labelList = new ArrayList<>();
+    int labelStart = 0;
     HashMap<String, Type> ST = new HashMap<>();
 
     public String getCode(){
@@ -26,6 +27,8 @@ public class Semantic implements Constants
         stack.clear();
         operator = "";
         idList.clear();
+        labelList.clear();
+        labelStart = 0;
         ST.clear();
     }
 
@@ -409,7 +412,7 @@ public class Semantic implements Constants
         } else {
             throw new SemanticError(token.getLexeme(), "tipo incompatível em operação de conversão de valor", token.getPosition());
         }
-        code += "\t\tconv.i8\n";
+        code += "\t\tconv.r8\n";
     }
 
     private void action23(Token token) throws SemanticError {
@@ -499,7 +502,7 @@ public class Semantic implements Constants
             System.out.println(idType);
 
             if (!idList.isEmpty()) {
-                for (int i = 0; i < idList.size() - 1; ++i)
+                for (int i = 0; i <= idList.size() - 1; ++i)
                     code += "\t\tdup\n";
             }
 
@@ -587,12 +590,14 @@ public class Semantic implements Constants
             ST.put(id, type);
             Type newType = type;
             if (type == Type.bin || type == Type.hexa) newType = Type.int64;
+            else if (type == Type.int64) newType = Type.float64;
             code += "\t\t.locals(" + newType.toString() + " " + id + ")\n";
 
             switch (token.getId()) {
-                case 3: //int
+                /*case 3: //int
                     code += "\t\tldc.i8 " + token.getLexeme() + "\n";
-                    break;
+                    break;*/
+                case 3: //int
                 case 4: //float
                     code += "\t\tldc.r8 " + token.getLexeme() + "\n";
                     break;
@@ -628,21 +633,21 @@ public class Semantic implements Constants
     private void action38(Token token) { atrOperator = token; }
 
     private void action39() {
-        int label = 1;
+        int label = labelStart + 1;
         labelList.add(label);
         code += "\t\tbrfalse r" + label + "\n";
     }
 
     private void action40() {
-        for (int label:
-             labelList) {
-            code += "\tr" + label + ":\n";
+        for (int i = 1; i < labelList.size(); i += 2) {
+            code += "\tr" + labelList.get(i) + ":\n";
         }
+        labelStart = labelList.get(labelList.size() - 1);
         labelList.clear();
     }
 
     private void action41() {
-        int label = labelList.remove((labelList.size() - 1));
+        int label = labelList.get(labelList.size() - 1);
         int cond = label + 1;
         labelList.add(cond);
         code += "\t\tbr r" + cond + "\n" +
@@ -650,28 +655,28 @@ public class Semantic implements Constants
     }
 
     private void action42() {
-        int label = labelList.get(0) + 1;
+        int label = labelList.get(labelList.size() - 1) + 1;
         labelList.add(label);
         code += "\t\tbrfalse r" + label + "\n";
     }
 
     private void action43() {
-        int label = labelList.remove((labelList.size() - 1));
+        int label = labelList.get(labelList.size() - 1);
         int cond = label + 1;
         labelList.add(cond);
         code += "\t\tbr r" + cond + "\n" +
                 "\tr" + label + ":\n";
-        System.out.println(labelList.size());
     }
 
     private void action44() {
-        int label = 1;
+        int label = labelStart + 1;
         labelList.add(label);
         code += "\t\tr" + label + ":\n";
     }
 
     private void action45() {
         int label = labelList.remove((labelList.size() - 1));
+        labelStart = label;
         code += "\t\tbrfalse r" + label + "\n";
     }
 }
