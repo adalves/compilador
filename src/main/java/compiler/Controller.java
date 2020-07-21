@@ -92,6 +92,7 @@ public class Controller implements Initializable {
         File file = fileChooser.showOpenDialog(primaryStage);
         if (file != null) {
             currFile = file;
+            compiledFile = null;
             editorArea.clear();
             editorArea.appendText(FileUtils.readFile(currFile));
             messageArea.clear();
@@ -123,13 +124,18 @@ public class Controller implements Initializable {
     }
 
     public void compileBtnPress() {
+        saveBtnPress();
         String str = compiler.compile(editorArea.getText());
         messageArea.setText(str);
 
-        if (str.equals("Programa compilado com sucesso")) {
-            compiledFile = fileChooser.showSaveDialog(primaryStage);
-            if (compiledFile != null)
+        if (currFile != null) {
+            if (str.equals("Programa compilado com sucesso")) {
+                if (compiledFile == null) {
+                    String fileName = currFile.getName().replaceFirst("[.][^.]+$", "");
+                    compiledFile = new File(currFile.getParent(), fileName + ".il");
+                }
                 FileUtils.writeToFile(compiledFile, compiler.getCompiledCode());
+            }
         }
     }
 

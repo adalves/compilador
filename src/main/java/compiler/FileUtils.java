@@ -10,7 +10,7 @@ public class FileUtils {
     public static String readFile (File file) {
         String text = "";
         try {
-            text = Files.readString(file.toPath(), StandardCharsets.ISO_8859_1);
+            text = Files.readString(file.toPath(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -19,7 +19,7 @@ public class FileUtils {
 
     public static void writeToFile (File file, String content) {
         try {
-            Files.writeString(file.toPath(), content, StandardCharsets.ISO_8859_1);
+            Files.writeString(file.toPath(), content, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }

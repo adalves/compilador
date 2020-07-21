@@ -1,6 +1,7 @@
 package analysis;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Stack;
 import java.util.ArrayList;
 
@@ -9,8 +10,11 @@ public class Semantic implements Constants
     String code = "";
     Stack<Type> stack = new Stack<Type>();
     String operator = "";
+    Token atrOperator;
     Type varType;
+    Token varValue;
     ArrayList<String> idList = new ArrayList<>();
+    ArrayList<Integer> labelList = new ArrayList<>();
     HashMap<String, Type> ST = new HashMap<>();
 
     public String getCode(){
@@ -21,6 +25,8 @@ public class Semantic implements Constants
         code = "";
         stack.clear();
         operator = "";
+        idList.clear();
+        ST.clear();
     }
 
     public void executeAction(int action, Token token)	throws SemanticError
@@ -103,7 +109,7 @@ public class Semantic implements Constants
                 action30(token);
                 break;
             case 31:
-                action31();
+                action31(token);
                 break;
             case 32:
                 action32(token);
@@ -112,10 +118,40 @@ public class Semantic implements Constants
                 action33(token);
                 break;
             case 34:
-                action34();
+                action34(token);
                 break;
             case 35:
-                action35();
+                action35(token);
+                break;
+            case 36:
+                action36(token);
+                break;
+            case 37:
+                action37(token);
+                break;
+            case 38:
+                action38(token);
+                break;
+            case 39:
+                action39();
+                break;
+            case 40:
+                action40();
+                break;
+            case 41:
+                action41();
+                break;
+            case 42:
+                action42();
+                break;
+            case 43:
+                action43();
+                break;
+            case 44:
+                action44();
+                break;
+            case 45:
+                action45();
                 break;
             default:
                 throw new SemanticError("Ação não implementada");
@@ -133,7 +169,7 @@ public class Semantic implements Constants
             stack.push(Type.float64);
         }
         else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
 
         code += "\t\tadd\n";
@@ -150,7 +186,7 @@ public class Semantic implements Constants
             stack.push(Type.float64);
         }
         else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
 
         code += "\t\tsub\n";
@@ -167,7 +203,7 @@ public class Semantic implements Constants
             stack.push(Type.float64);
         }
         else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
 
         code += "\t\tmul\n";
@@ -187,7 +223,7 @@ public class Semantic implements Constants
             stack.push(Type.float64);
         }
         else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
 
         code += "\t\tdiv\n";
@@ -195,8 +231,7 @@ public class Semantic implements Constants
 
     private void action05(Token token) {
         stack.push(Type.int64);
-        code += "\t\tldc.i8 " + token.getLexeme() + "\n" +
-                "\t\tconv.r8\n";
+        code += "\t\tldc.r8 " + token.getLexeme() + "\n";
     }
 
     private void action06(Token token) {
@@ -209,7 +244,7 @@ public class Semantic implements Constants
         if ((type == Type.int64) || (type == Type.float64)) {
             stack.push(type);
         } else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
     }
 
@@ -218,7 +253,7 @@ public class Semantic implements Constants
         if ((type == Type.int64) || (type == Type.float64)) {
             stack.push(type);
         } else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão aritmética", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão aritmética", token.getPosition());
         }
 
         code += "\t\tldc.i8 -1\n" +
@@ -252,7 +287,12 @@ public class Semantic implements Constants
                 code += "\t\tcgt\n";
                 break;
             case "==":
-                code += "\t\tcet\n";
+                code += "\t\tceq\n";
+                break;
+            case "!=":
+                code += "\t\tceq\n" +
+                        "\t\tldc.i4.1\n" +
+                        "\t\txor\n";
                 break;
         }
     }
@@ -272,7 +312,7 @@ public class Semantic implements Constants
         if (type == Type.bool) {
             stack.push(type);
         } else {
-            throw new SemanticError(token.getLexeme(), "tipo  incompatível em expressão lógica", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão lógica", token.getPosition());
         }
 
         code += "\t\tldc.i4.1\n" +
@@ -282,7 +322,7 @@ public class Semantic implements Constants
     private void action14() {
         Type type = stack.pop();
         if (type == Type.int64) {
-            code += "\t\tconv.i8\n";
+            type = Type.float64;
         } else if (type == Type.bin) {
             code += "\t\tldstr \"#b\"\n" +
                     "\t\tcall void [mscorlib]System.Console::Write(string)\n" +
@@ -322,7 +362,7 @@ public class Semantic implements Constants
         if ((type1 == type2) && (type1 == Type.bool)) {
             stack.push(type1);
         } else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão lógica", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão lógica", token.getPosition());
         }
 
         code += "\t\tand\n";
@@ -335,7 +375,7 @@ public class Semantic implements Constants
         if ((type1 == type2) && (type1 == Type.bool)) {
             stack.push(type1);
         } else {
-            throw new SemanticError(token.getLexeme(), "tipos incompatíveis em expressão lógica", token.getPosition());
+            throw new SemanticError(token.getLexeme(), "tipo(s) incompatível(is) em expressão lógica", token.getPosition());
         }
 
         code += "\t\tor\n";
@@ -369,7 +409,7 @@ public class Semantic implements Constants
         } else {
             throw new SemanticError(token.getLexeme(), "tipo incompatível em operação de conversão de valor", token.getPosition());
         }
-        code += "\t\tconv.r8\n";
+        code += "\t\tconv.i8\n";
     }
 
     private void action23(Token token) throws SemanticError {
@@ -400,17 +440,33 @@ public class Semantic implements Constants
             case "float":
                 varType = Type.float64;
                 break;
+            case "bool":
+                varType = Type.bool;
+                break;
+            case "hexa":
+                varType = Type.hexa;
+                break;
+            case "bin":
+                varType = Type.bin;
+                break;
+            case "str":
+                varType = Type.string;
+                break;
         }
     }
 
-    private void action31() throws SemanticError {
+    private void action31(Token token) throws SemanticError {
         for (String id:
              idList) {
             if (ST.containsKey(id)){
-                throw new SemanticError("Variável já declarada");
+                throw new SemanticError(id, "já declarado", token.getPosition());
             }
             ST.put(id, varType);
-            code += "\t\t.locals(" + varType.toString() + id + ")\n";
+            Type type = varType;
+            if (type == Type.bin || type == Type.hexa) type = Type.int64;
+            else if (type == Type.int64) type = Type.float64;
+
+            code += "\t\t.locals(" + type.toString() + " " + id + ")\n";
         }
         idList.clear();
     }
@@ -422,54 +478,202 @@ public class Semantic implements Constants
     private void action33(Token token) throws SemanticError {
         String id = token.getLexeme();
         if (!ST.containsKey(id)) {
-            throw new SemanticError("Variável não declarada");
+            throw new SemanticError(id, "não declarado", token.getPosition());
         }
         Type idType = ST.get(id);
         stack.push(idType);
-        code += "\t\tldloc" + id + "\n";
+        code += "\t\tldloc " + id + "\n";
+    }
 
-        if (idType == Type.int64) {
-            code += "conv.r8";
+    private void action34(Token token) throws SemanticError {
+        Iterator<String> iter
+                = idList.iterator();
+        while (iter.hasNext()){
+            String id = idList.remove(0);
+            System.out.println(id);
+            if (!ST.containsKey(id)) {
+                throw new SemanticError(id, "não declarado", token.getPosition());
+            }
+
+            Type idType = ST.get(id);
+            System.out.println(idType);
+
+            if (!idList.isEmpty()) {
+                for (int i = 0; i < idList.size() - 1; ++i)
+                    code += "\t\tdup\n";
+            }
+
+            if (atrOperator.getId() == 47 || atrOperator.getId() == 48) {
+                code += "\t\tldloc " + id + "\n";
+                if (ST.get(id) == Type.int64) {
+                    code += "\t\tconv.r8\n";
+                }
+                if (atrOperator.getId() == 47)
+                    code += "\t\tadd\n";
+                else {
+                    code += "\t\tsub\n" +
+                            "\t\tldc.i8 -1\n" +
+                            "\t\tconv.r8\n" +
+                            "\t\tmul\n";
+                }
+            }
+            code += "\t\tstloc " + id + "\n";
         }
     }
 
-    private void action34() throws SemanticError {
-        String id = idList.remove(0);
-        if (!ST.containsKey(id)){
-            throw new SemanticError("Variável não declarada");
-        }
-
-        Type idType = ST.get(id);
-        Type expType = stack.pop();
-        if (idType != expType){
-            throw new SemanticError("Tipo incompatível");
-        }
-
-        if (idType == Type.int64) {
-            code += "\t\tconv.i8\n";
-        }
-        code+="\t\tstloc" + id + "\n";
-    }
-
-    private void action35() throws SemanticError {
+    private void action35(Token token) throws SemanticError {
         for (String id:
                 idList) {
             if (!ST.containsKey(id)){
-                throw new SemanticError("Variável não declarada");
+                throw new SemanticError(id, "não declarado", token.getPosition());
             }
             Type idType = ST.get(id);
-            String typeClass = "";
-            if (idType == Type.int64)
-                typeClass = "Int64";
-            else if (idType == Type.float64)
-                typeClass = "Double";
 
-            code += "\t\tcall string [mscorlib]System.Console::ReadLine()\n" +
-                    "\t\tcall "+ idType + " [mscorlib]System." + typeClass + "::Parse(string)\n";
+            code += "\t\tcall string [mscorlib]System.Console::ReadLine()\n";
+
+            /*if (idType == Type.int64) {
+                code += "\t\tcall int64 [mscorlib]System.Int64::Parse(string)\n";
+            } else */if (idType == Type.float64 || idType == Type.int64) {
+                code += "\t\tcall float64 [mscorlib]System.Double::Parse(string)\n";
+            } else if (idType == Type.bool) {
+                code += "\t\tcall bool [mscorlib]System.Boolean::Parse(string)\n";
+            } else {
+                if (idType == Type.hexa) {
+                    code += "\t\tldc.i4 16\n";
+                } else if (idType == Type.bin) {
+                    code += "\t\tldc.i4 2\n";
+                }
+                code += "\t\tcall int64 [mscorlib]System.Convert::ToInt64(string, int32)\n";
+            }
+
+            code += "\t\tstloc " + id + "\n";
         }
         idList.clear();
     }
 
+    private void action36(Token token) {
+        varValue = token;
+    }
+
+    private void action37(Token token) throws SemanticError {
+        Type type = Type.int64;
+        switch (token.getId()) {
+            case 3:
+                type = Type.int64;
+                break;
+            case 4:
+                type = Type.float64;
+                break;
+            case 5:
+                type = Type.bin;
+                break;
+            case 6:
+                type = Type.hexa;
+                break;
+            case 7:
+                type = Type.string;
+                break;
+            case 15:
+            case 27:
+                type = Type.bool;
+                break;
+        }
+
+        for (String id:
+                idList) {
+            if (ST.containsKey(id)){
+                throw new SemanticError(id, "já declarado", token.getPosition());
+            }
+            ST.put(id, type);
+            Type newType = type;
+            if (type == Type.bin || type == Type.hexa) newType = Type.int64;
+            code += "\t\t.locals(" + newType.toString() + " " + id + ")\n";
+
+            switch (token.getId()) {
+                case 3: //int
+                    code += "\t\tldc.i8 " + token.getLexeme() + "\n";
+                    break;
+                case 4: //float
+                    code += "\t\tldc.r8 " + token.getLexeme() + "\n";
+                    break;
+                case 5: //bin
+                    String bin = token.getLexeme().substring(2);
+                    code += "\t\tldstr \"" + bin + "\"\n" +
+                            "\t\tldc.i4 2\n" +
+                            "\t\tcall int64 [mscorlib]System.Convert::ToInt64(string, int32)\n";
+                    break;
+                case 6: //hexa
+                    String hexa = token.getLexeme().substring(2);
+                    code += "\t\tldstr \"" + hexa + "\"\n" +
+                            "\t\tldc.i4 16\n" +
+                            "\t\tcall int64 [mscorlib]System.Convert::ToInt64(string, int32)\n";
+                    break;
+                case 7: //string
+                    code += "\t\tldstr " + token.getLexeme() + "\n";
+                    break;
+                case 15:
+                    code += "\t\tldc.i4.0" + "\n";
+                    break;
+                case 27:
+                    code += "\t\tldc.i4.1" + "\n";
+                    break;
+                default:
+                    throw new SemanticError(token.getLexeme(), "símbolo inválido", token.getPosition());
+            }
+            code += "\t\tstloc " + id + "\n";
+        }
+        idList.clear();
+    }
+
+    private void action38(Token token) { atrOperator = token; }
+
+    private void action39() {
+        int label = 1;
+        labelList.add(label);
+        code += "\t\tbrfalse r" + label + "\n";
+    }
+
+    private void action40() {
+        for (int label:
+             labelList) {
+            code += "\tr" + label + ":\n";
+        }
+        labelList.clear();
+    }
+
+    private void action41() {
+        int label = labelList.remove((labelList.size() - 1));
+        int cond = label + 1;
+        labelList.add(cond);
+        code += "\t\tbr r" + cond + "\n" +
+                "\tr" + label + ":\n";
+    }
+
+    private void action42() {
+        int label = labelList.get(0) + 1;
+        labelList.add(label);
+        code += "\t\tbrfalse r" + label + "\n";
+    }
+
+    private void action43() {
+        int label = labelList.remove((labelList.size() - 1));
+        int cond = label + 1;
+        labelList.add(cond);
+        code += "\t\tbr r" + cond + "\n" +
+                "\tr" + label + ":\n";
+        System.out.println(labelList.size());
+    }
+
+    private void action44() {
+        int label = 1;
+        labelList.add(label);
+        code += "\t\tr" + label + ":\n";
+    }
+
+    private void action45() {
+        int label = labelList.remove((labelList.size() - 1));
+        code += "\t\tbrfalse r" + label + "\n";
+    }
 }
 
 

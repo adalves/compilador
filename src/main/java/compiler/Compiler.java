@@ -26,8 +26,9 @@ public class Compiler {
             result = "Erro na linha " + getLine(text, e.getPosition()) + " - " +
                     "encontrado " + symbol + " esperado " + e.getMessage();
         } catch (SemanticError e) {
-            String symbol = e.getSymbol();
-            result = "Erro na linha " + getLine(text, e.getPosition()) + " - " + e.getMessage();
+            result = "Erro na linha " + getLine(text, e.getPosition()) + " - ";
+            if (e.getMessage().contains("declarado")) result += e.getSymbol() + " ";
+            result += e.getMessage();
         }
 
         return result;
